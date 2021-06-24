@@ -9,13 +9,13 @@ int compare(const void *a, const void *b)
     Value2Index *sum2 = (Value2Index *)b;
     return sum1->value - sum2->value;
 }
-int GetleftIndex(Value2Index *sum, int size, int value)
+int GetleftIndex(Value2Index *sortPrefixSum, int size, int value)
 {
     int left = 1;
     int right = size;
     while (left < right) {
         int mid = left + ((right - left) >> 1);
-        if (sum[mid].value >= value) {
+        if (sortPrefixSum[mid].value >= value) {
             right = mid;
         } else {
             left = mid + 1;
@@ -26,34 +26,34 @@ int GetleftIndex(Value2Index *sum, int size, int value)
         return -1;
     }
 
-    return (sum[left].value == value) ? left : -1;
+    return (sortPrefixSum[left].value == value) ? left : -1;
 }
 
 
 int subarraySum(int* nums, int numsSize, int k)
 {
-    int sum[MAX_NUM_COUNT] = {0};
-    Value2Index sumSort[MAX_NUM_COUNT] = {0};
+    int prefixSum[MAX_NUM_COUNT] = {0};
+    Value2Index sortPrefixSum[MAX_NUM_COUNT] = {0};
     int i = 1;
     int count = 0;
 
     for (; i <= numsSize; i++) {
-        sum[i] = sum[i - 1] + nums[i - 1];
-        sumSort[i].value = sum[i];
-        sumSort[i].index = i;
+        prefixSum[i] = prefixSum[i - 1] + nums[i - 1];
+        sortPrefixSum[i].value = prefixSum[i];
+        sortPrefixSum[i].index = i;
     }
 
-    qsort(&sumSort[1], numsSize, sizeof(Value2Index), compare);
+    qsort(&sortPrefixSum[1], numsSize, sizeof(Value2Index), compare);
 
     for (i = 1; i <= numsSize; i++) {
-        if (sum[i] == k) {
+        if (prefixSum[i] == k) {
             count++;
         }
-        int leftIndex = GetleftIndex(sumSort, numsSize + 1,  sum[i] - k);
+        int leftIndex = GetleftIndex(sortPrefixSum, numsSize + 1,  prefixSum[i] - k);
         if (leftIndex == -1) {
             continue;
         }
-        while (sumSort[leftIndex].value == (sum[i] - k) && (sumSort[leftIndex].index <= (i - 1))) {
+        while (sortPrefixSum[leftIndex].value == (prefixSum[i] - k) && (sortPrefixSum[leftIndex].index <= (i - 1))) {
             count++;
             leftIndex++;
         }        
