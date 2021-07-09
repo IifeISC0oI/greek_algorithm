@@ -18,6 +18,7 @@ int* findOrder(int numCourses, int** prerequisites, int prerequisitesSize, int* 
     int rear = 0;
     int *ret = (int *)malloc(MAX_DEGE_NUM * sizeof(int));
     int retNum = 0;
+    
     for (; i < prerequisitesSize; i++) {
         int src = prerequisites[i][1];
         int dest =  prerequisites[i][0];
